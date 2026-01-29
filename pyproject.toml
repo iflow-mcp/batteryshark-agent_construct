@@ -1,6 +1,6 @@
 [project]
 name = "iflow-mcp_batteryshark_agent_construct"
-version = "0.1.0"
+version = "0.1.1"
 description = "Agent Construct - A Model Context Protocol (MCP) server implementation"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -27,7 +27,7 @@ dependencies = [
 
 [project.scripts]
 agent-construct = "mcp_server:main"
-agent-construct-stdio = "mcp_server.stdio_main:main"
+agent-construct-stdio = "mcp_server.stdio_entry:main"
 
 [build-system]
 requires = ["hatchling"]
