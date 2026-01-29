@@ -10,8 +10,8 @@ import requests
 import re
 from typing import Dict, List, Optional, Any
 from pydantic import BaseModel, Field
-from google import genai
-from google.genai import types
+import google.generativeai as genai
+from google.generativeai import types
 from mcp_server.utils.tool_decorator import mcp_tool
 
 # Configure logging
@@ -119,15 +119,13 @@ async def search_web(query: str, config: Dict[str, Any]) -> Dict:
     for attempt in range(config["max_retries"]):
         try:
             # Initialize Gemini client with config API key
-            client = genai.Client(api_key=config["gemini_api_key"])
+            genai.configure(api_key=config["gemini_api_key"])
+            model = genai.GenerativeModel(config["gemini_model"])
             
             # Generate content using Gemini
-            response = client.models.generate_content(
-                model=config["gemini_model"],
-                contents=f"{query}",
-                config=types.GenerateContentConfig(
-                    tools=[types.Tool(google_search=types.GoogleSearch())]
-                )
+            response = model.generate_content(
+                f"{query}",
+                tools=[genai.types.Tool(google_search=genai.types.google_search())]
             )
             
             # Extract all metadata from response

@@ -33,18 +33,18 @@ class MCPToolServer:
         # Set up SSE transport
         self.sse = SseServerTransport("/messages/")
         
-        # Register tool listing handler
-        @self.app.list_tools()
-        async def list_tools():
-            return self.tool_manager.get_tool_list()
-        
         # Set up watchdog in debug mode
         if config.debug_mode:        
             self.setup_watchdog()
             logger.info("Running in DEBUG mode with hot reloading enabled")
             
-        # Load tools after watchdog is set up
+        # Load tools first
         self.tool_manager.load_tools_from_directory()
+        
+        # Register tool listing handler AFTER tools are loaded
+        @self.app.list_tools()
+        async def list_tools():
+            return self.tool_manager.get_tool_list()
         
     async def handle_sse(self, request):
         """Handle SSE connection."""
@@ -180,4 +180,4 @@ class MCPToolServer:
             logger.info("Shutting down server...")
         finally:
             self.is_running = False
-            self.cleanup_watchdog() 
+            self.cleanup_watchdog()
